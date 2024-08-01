@@ -12,9 +12,9 @@ const DynamicForm = () => {
         if (Array.isArray(response.data.data)) {
           const dataWithCampoIDAndCollapsibleID = response.data.data.map((row, index) => ({
             ...row,
-            campoID: `campo-${index}`,
-            collapsibleID: `collapsible-${index}`,
-            nuevoCampo: '',
+            campoID: `campo-${index}`, // Corrección aquí
+            collapsibleID: `collapsible-${index}`, // Corrección aquí
+            nuevoCampo: row.valor,
           }));
           setData(dataWithCampoIDAndCollapsibleID);
         } else {
@@ -34,8 +34,30 @@ const DynamicForm = () => {
     });
   };
 
-  const handleInputChange = (collapsibleID, newValue) => {
-    setData((prevData) => prevData.map((row) => row.collapsibleID === collapsibleID ? { ...row, nuevoCampo: newValue } : row));
+  const handleInputChange = (campoID, newValue) => {
+    setData((prevData) =>
+      prevData.map((row) =>
+        row.campoID === campoID ? { ...row, valor: newValue } : row
+      )
+    );
+  };
+
+  const handleUpdate = async (row) => {
+    try {
+      const response = await axios.post('/updateData', {
+        updateData: row,
+        id: row.id, // El ID de la fila que estamos actualizando
+        sheetName: 'Datos Generales RAC',
+      });
+      if (response.data.status) {
+        alert('Se actualizó correctamente');
+      } else {
+        alert('Error al actualizar');
+      }
+    } catch (error) {
+      console.error('Error al actualizar:', error);
+      alert('Error en la conexión');
+    }
   };
 
   const renderField = (row) => {
@@ -87,6 +109,7 @@ const DynamicForm = () => {
           textAlign: 'left',
           fontSize: '15px',
           marginBottom: '5px',
+          height: '200px',
           '&:hover': { backgroundColor: '#6b0900' },
         }}
       >
@@ -96,7 +119,7 @@ const DynamicForm = () => {
         <Box marginTop={2} padding={2} sx={{ backgroundColor: '#f0f0f0', borderRadius: '10px' }}>
           {fields}
           <Box textAlign="center" marginTop={2}>
-            <Button variant="contained" color="error">Guardar información</Button>
+            <Button variant="contained" color="error" onClick={() => handleUpdate(row)}>Guardar información</Button>
           </Box>
         </Box>
       </Collapse>
