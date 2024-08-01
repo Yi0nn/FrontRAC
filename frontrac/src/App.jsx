@@ -9,8 +9,8 @@ function App() {
 
   return (
     <>
+      <header><h1>INFORMACION PARA RAC</h1></header>
         <div>
-          <h1>INFORMACION PARA RAC</h1>
           <DynamicForm />
         </div>
     </>

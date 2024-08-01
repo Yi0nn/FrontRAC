@@ -43,6 +43,7 @@ const DynamicForm = () => {
   };
 
   const renderField = (row) => {
+    console.log(row)
     if (row.tipo === 'Campo') {
       return (
         <TextField
@@ -58,16 +59,16 @@ const DynamicForm = () => {
       return <h2>{row.etiqueta}</h2>;
     } else if (row.tipo === 'Criterio') {
       return (
-        <table style={{ borderCollapse: 'collapse', width: '100%', }}>
-          <tr style={{ backgroundColor: '#a30000', color: 'white', }}>
-            <th className="criterio" style={{ border: '1px solid black', padding: '10px', width: '33.33%', }}>Criterio</th>
-            <th style={{ border: '1px solid black', padding: '10px', width: '33.33%', }}>Grado de Cumplimiento</th>
-            <th style={{ border: '1px solid black', padding: '10px', width: '33.33%', }}>Calificación</th>
+        <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+          <tr style={{ backgroundColor: '#a30000', color: 'white' }}>
+            <th className="criterio" style={{ border: '1px solid black', padding: '10px', width: '33.33%' }}>Criterio</th>
+            <th style={{ border: '1px solid black', padding: '10px', width: '33.33%' }}>Grado de Cumplimiento</th>
+            <th style={{ border: '1px solid black', padding: '10px', width: '33.33%' }}>Calificación</th>
           </tr>
           <tr>
-            <td className="criterio" style={{ border: '1px solid black', padding: '10px', width: '33.33%', }}>{row.etiqueta}</td>
-            <td style={{ border: '1px solid black', padding: '10px', width: '33.33%', }}>{row.valor}</td>
-            <td style={{ border: '1px solid black', padding: '10px', width: '33.33%', }}>
+            <td className="criterio" style={{ border: '1px solid black', padding: '10px', width: '33.33%' }}>{row.etiqueta}</td>
+            <td style={{ border: '1px solid black', padding: '10px', width: '33.33%' }}>{row.valor}</td>
+            <td style={{ border: '1px solid black', padding: '10px', width: '33.33%' }}>
               <textarea />
             </td>
           </tr>
@@ -109,96 +110,128 @@ const DynamicForm = () => {
       </Collapse>
     </Box>
   );
+
   const renderSubCollapsible = (row, fields) => (
-  <Box key={row.collapsibleID} marginBottom={2}>
-    <Button
-      variant="outlined"
-      onClick={() => handleToggleCollapsible(row.collapsibleID)}
-      sx={{
-        backgroundColor: '#a30000',
-        color: 'white',
-        cursor: 'pointer',
-        padding: '18px',
-        width: '100%',
-        textAlign: 'left',
-        fontSize: '15px',
-        marginBottom: '5px',
-        '&:hover': { backgroundColor: '#6b0900' },
-        '&.active': { backgroundColor: '#6b0900' },
-      }}
-    >
-      {row.etiqueta}
-    </Button>
-    <Collapse in={openCollapsibles[row.collapsibleID]}>
-      <Box marginTop={2}>
-        {fields}
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Nuevo campo"
-          value={row.nuevoCampo || ''}
-          onChange={(e) => handleInputChange(row.collapsibleID, e.target.value)}
-        />
-      </Box>
-    </Collapse>
-  </Box>
-);
+    <Box key={row.collapsibleID} marginBottom={2}>
+      <Button
+        variant="outlined"
+        onClick={() => handleToggleCollapsible(row.collapsibleID)}
+        sx={{
+          backgroundColor: '#a30000',
+          color: 'white',
+          cursor: 'pointer',
+          padding: '18px',
+          width: '100%',
+          textAlign: 'left',
+          fontSize: '15px',
+          marginBottom: '5px',
+          '&:hover': { backgroundColor: '#6b0900' },
+          '&.active': { backgroundColor: '#6b0900' },
+        }}
+      >
+        {row.etiqueta}
+      </Button>
+      <Collapse in={openCollapsibles[row.collapsibleID]}>
+        <Box marginTop={2}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ backgroundColor: '#a30000', color: 'white' }}>
+                <th colSpan="2" style={{ padding: '10px', border: '1px solid black' }}>Evaluación de la</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style={{ padding: '10px', border: '1px solid black' }}>Fortaleza del programa</td>
+                <td style={{ padding: '10px', border: '1px solid black' }}>
+                  <textarea style={{ width: '100%' }}></textarea>
+                </td>
+              </tr>
+              <tr>
+                <td style={{ padding: '10px', border: '1px solid black' }}>Oportunidades de mejoramiento relacionadas con la condición</td>
+                <td style={{ padding: '10px', border: '1px solid black' }}>
+                  <textarea style={{ width: '100%' }}></textarea>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </Box>
+      </Collapse>
+    </Box>
+  );
+  const renderLabelAndLink = (row) => (
+    <Box key={row.collapsibleID} marginBottom={2}>
+      <Typography variant="h6" component="div" sx={{ marginBottom: 2 }}>
+        {row.etiqueta}
+      </Typography>
+      <a href={row.valor} target="_blank" rel="noopener noreferrer" style={{ color: '#a30000' }}>
+        Vinculo a la tabla
+      </a>
+    </Box>
+  );
 
-const groupFieldsByCollapsible = (rows) => {
-  if (!Array.isArray(rows)) {
-    console.error('Expected rows to be an array:', rows);
-    return null;
-  }
-  const groupedFields = [];
-  let currentCollapsible = null;
-  let currentFields = [];
-  let currentSubCollapsible = null;
-  let currentSubFields = [];
+  const groupFieldsByCollapsible = (rows) => {
+    if (!Array.isArray(rows)) {
+      console.error('Expected rows to be an array:', rows);
+      return null;
+    }
+    const groupedFields = [];
+    let currentCollapsible = null;
+    let currentFields = [];
+    let currentSubCollapsible = null;
+    let currentSubFields = [];
 
-  rows.forEach((row) => {
-    if (row.tipo === 'Colapsable1') {
-      if (currentCollapsible) {
+    rows.forEach((row) => {
+      if (row.tipo === 'Colapsable1') {
+        if (currentCollapsible) {
+          if (currentSubCollapsible) {
+            currentFields.push(renderSubCollapsible(currentSubCollapsible, currentSubFields));
+            currentSubCollapsible = null;
+            currentSubFields = [];
+          }
+          groupedFields.push(renderCollapsible(currentCollapsible, currentFields));
+        }
+        currentCollapsible = row;
+        currentFields = [];
+      } else if (row.tipo === 'Colapsable2') {
+        if (currentSubCollapsible) {
+          currentFields.push(renderSubCollapsible(currentSubCollapsible, currentSubFields));
+        }
+        currentSubCollapsible = row;
+        currentSubFields = [];
+      } else if (row.tipo === 'ConclusionCondicion') {
         if (currentSubCollapsible) {
           currentFields.push(renderSubCollapsible(currentSubCollapsible, currentSubFields));
           currentSubCollapsible = null;
           currentSubFields = [];
         }
-        groupedFields.push(renderCollapsible(currentCollapsible, currentFields));
+        currentSubCollapsible = row;
+        currentSubFields = [];
+      } else if (row.tipo === 'TablaExtra') {
+        currentFields.push(renderLabelAndLink(row));
+      } else {
+        if (currentSubCollapsible) {
+          currentSubFields.push(renderField(row));
+        } else {
+          currentFields.push(renderField(row));
+        }
       }
-      currentCollapsible = row;
-      currentFields = [];
-    } else if (row.tipo === 'Colapsable2') {
+    });
+
+    if (currentCollapsible) {
       if (currentSubCollapsible) {
         currentFields.push(renderSubCollapsible(currentSubCollapsible, currentSubFields));
-        currentSubCollapsible = null;
-        currentSubFields = [];
       }
-      currentSubCollapsible = row;
-      currentSubFields = [];
-    } else {
-      if (currentSubCollapsible) {
-        currentSubFields.push(renderField(row));
-      } else {
-        currentFields.push(renderField(row));
-      }
+      groupedFields.push(renderCollapsible(currentCollapsible, currentFields));
     }
-  });
 
-  if (currentCollapsible) {
-    if (currentSubCollapsible) {
-      currentFields.push(renderSubCollapsible(currentSubCollapsible, currentSubFields));
-    }
-    groupedFields.push(renderCollapsible(currentCollapsible, currentFields));
-  }
+    return groupedFields;
+  };
 
-  return groupedFields;
-};
-
-return (
-  <form>
-    {groupFieldsByCollapsible(data)}
-  </form>
-);
+  return (
+    <form>
+      {groupFieldsByCollapsible(data)}
+    </form>
+  );
 };
 
 export default DynamicForm;
