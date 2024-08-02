@@ -268,10 +268,10 @@ const DynamicForm = () => {
 
   const groupCollapsiblesInRows = (collapsibles) => {
     const rows = [];
-    for (let i = 0; i < collapsibles.length; i += 3) {
+    for (let i = 0; i < collapsibles.length; i += 4) {
       rows.push(
         <Grid key={i} container spacing={2} marginBottom={2} sx={{ height: '100%' }}>
-          {collapsibles.slice(i, i + 3).map((collapsible, index) => (
+          {collapsibles.slice(i, i + 4).map((collapsible, index) => (
             <Grid item xs={12} sm={6} md={3} key={index} sx={{ height: '100%' }}>
               {collapsible}
             </Grid>
