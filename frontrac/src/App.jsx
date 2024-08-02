@@ -9,7 +9,7 @@ function App() {
 
   return (
     <>
-      <header><h1>INFORMACION PARA RAC</h1></header>
+      <header><h1 className='creative-title'>INFORMACION PARA RAC</h1></header>
         <div>
           <DynamicForm />
         </div>

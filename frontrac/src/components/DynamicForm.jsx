@@ -116,7 +116,7 @@ const DynamicForm = () => {
       key={row.collapsibleID}
       marginBottom={2}
       flex={1}
-      sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+      sx={{ display: 'flex', flexDirection: 'column', height: '100%'}}
     >
       <Button
         variant="contained"
@@ -202,7 +202,7 @@ const DynamicForm = () => {
 
   const renderLabelAndLink = (row) => (
     <Box key={row.collapsibleID} marginBottom={2}>
-      <Typography variant="h6" component="div" sx={{ marginBottom: 2 }}>
+      <Typography variant="h6" component="div" sx={{ marginBottom: 2, fontSize: '16px', marginTop:'10px' }}>
         {row.etiqueta}
       </Typography>
       <a href={row.valor} target="_blank" rel="noopener noreferrer" style={{ color: '#a30000' }}>
