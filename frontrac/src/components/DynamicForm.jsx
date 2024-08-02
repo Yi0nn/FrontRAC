@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { TextField, Typography, Collapse, Button, Box, Paper, Grid } from '@mui/material';
+import { Button, Box, Collapse, Typography, Paper, Grid } from '@mui/material';
 
 const DynamicForm = () => {
   const [data, setData] = useState([]);
@@ -35,24 +35,36 @@ const DynamicForm = () => {
   };
 
   const handleInputChange = (campoID, newValue) => {
-    setData((prevData) =>
-      prevData.map((row) =>
-        row.campoID === campoID ? { ...row, valor: newValue } : row
-      )
-    );
+    console.log("CampoID:", campoID);
+    console.log("Valor nuevo:", newValue);
+    setData((prevData) => {
+      const updatedData = prevData.map((row) =>
+        row.campoID === campoID ? { ...row, valor: newValue, nuevoCampo: newValue } : row
+      );
+      console.log("Datos actualizados en el estado:", updatedData);
+      return updatedData;
+    });
   };
-
+  
+  // Maneja la actualización de los datos
   const handleUpdate = async (row) => {
+    console.log("Datos antes de enviar:", row);
     try {
       const updatePayload = {
         id: row.id,
-        updateData: { ...row, valor: row.valor },
+        updateData: {
+          valor: row.valor === undefined ? "holaaaa" : row.valor,
+        },
         sheetName: 'Datos Generales RAC',
       };
       console.log('Datos enviados:', updatePayload);
       const response = await axios.post('https://datos-rac.vercel.app/updateData', updatePayload);
+      
       if (response.data.status) {
         alert('Se actualizó correctamente');
+        setData((prevData) =>
+          prevData.map((item) => (item.id === row.id ? { ...item, valor: row.valor } : item))
+        );
       } else {
         alert('Error al actualizar');
       }
@@ -65,7 +77,7 @@ const DynamicForm = () => {
   const renderField = (row) => {
     if (row.tipo === 'Campo') {
       return (
-        <TextField
+        <input
           key={row.campoID}
           label={row.etiqueta}
           fullWidth
