@@ -1,12 +1,22 @@
-
-.creative-title {
-    font-family: 'Arial', sans-serif; /* Cambia la fuente si lo deseas */
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centra el contenido horizontalmente */
+    padding: 20px;
+  }
+  
+  .creative-title {
+    font-family: 'Arial', sans-serif;
     font-size: 3rem;
     font-weight: bold;
-    color: rgb(206, 36, 6); /* Color del texto */
-    text-align: center;
-    padding: 20px;
-    border-radius: 10px;
-    position: relative;
-    overflow: hidden;
+    color: rgb(206, 36, 6);
+    text-align: center; /* Centra el texto del título */
+    margin: 0;
   }
+  
+  .header-container img {
+    width: 5%;
+    height: 5%;
+    margin-right: 30px;
+  }
+  
