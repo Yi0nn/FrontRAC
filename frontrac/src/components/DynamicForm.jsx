@@ -12,8 +12,8 @@ const DynamicForm = () => {
         if (Array.isArray(response.data.data)) {
           const dataWithCampoIDAndCollapsibleID = response.data.data.map((row, index) => ({
             ...row,
-            campoID: `campo-${index}`, // Corrección aquí
-            collapsibleID: `collapsible-${index}`, // Corrección aquí
+            campoID: `campo-${index}`,
+            collapsibleID: `collapsible-${index}`,
             nuevoCampo: row.valor,
           }));
           setData(dataWithCampoIDAndCollapsibleID);
@@ -44,11 +44,13 @@ const DynamicForm = () => {
 
   const handleUpdate = async (row) => {
     try {
-      const response = await axios.post('/updateData', {
-        updateData: row,
-        id: row.id, // El ID de la fila que estamos actualizando
+      const updatePayload = {
+        id: row.id,
+        updateData: { ...row, valor: row.valor },
         sheetName: 'Datos Generales RAC',
-      });
+      };
+      console.log('Datos enviados:', updatePayload);
+      const response = await axios.post('https://datos-rac.vercel.app/updateData', updatePayload);
       if (response.data.status) {
         alert('Se actualizó correctamente');
       } else {
@@ -98,7 +100,12 @@ const DynamicForm = () => {
   };
 
   const renderCollapsible = (row, fields) => (
-    <Box key={row.collapsibleID} marginBottom={2} flex={1}>
+    <Box
+      key={row.collapsibleID}
+      marginBottom={2}
+      flex={1}
+      sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+    >
       <Button
         variant="contained"
         color="error"
@@ -109,14 +116,24 @@ const DynamicForm = () => {
           textAlign: 'left',
           fontSize: '15px',
           marginBottom: '5px',
-          height: '200px',
           '&:hover': { backgroundColor: '#6b0900' },
         }}
       >
         {row.etiqueta}
       </Button>
       <Collapse in={openCollapsibles[row.collapsibleID]}>
-        <Box marginTop={2} padding={2} sx={{ backgroundColor: '#f0f0f0', borderRadius: '10px' }}>
+        <Box
+          marginTop={2}
+          padding={2}
+          sx={{
+            backgroundColor: '#f0f0f0',
+            borderRadius: '10px',
+            flex: 1,
+            width: '200%',
+            maxHeight: 'calc(100vh - 200px)', // Ajusta el máximo alto si es necesario
+            overflow: 'auto', // Añade scroll si el contenido es demasiado grande
+          }}
+        >
           {fields}
           <Box textAlign="center" marginTop={2}>
             <Button variant="contained" color="error" onClick={() => handleUpdate(row)}>Guardar información</Button>
@@ -239,11 +256,11 @@ const DynamicForm = () => {
 
   const groupCollapsiblesInRows = (collapsibles) => {
     const rows = [];
-    for (let i = 0; i < collapsibles.length; i += 4) {
+    for (let i = 0; i < collapsibles.length; i += 3) {
       rows.push(
-        <Grid key={i} container spacing={2} marginBottom={2}>
-          {collapsibles.slice(i, i + 4).map((collapsible, index) => (
-            <Grid item xs={3} key={index}>
+        <Grid key={i} container spacing={2} marginBottom={2} sx={{ height: '100%' }}>
+          {collapsibles.slice(i, i + 3).map((collapsible, index) => (
+            <Grid item xs={12} sm={6} md={3} key={index} sx={{ height: '100%' }}>
               {collapsible}
             </Grid>
           ))}
@@ -254,7 +271,7 @@ const DynamicForm = () => {
   };
 
   return (
-    <Paper sx={{ padding: '20px', maxWidth: '1000px', margin: '20px auto' }}>
+    <Paper sx={{ padding: '20px', maxWidth: '1500px', margin: '30px auto', height: '100%' }}>
       <form>
         {groupCollapsiblesInRows(groupFieldsByCollapsible(data))}
       </form>
