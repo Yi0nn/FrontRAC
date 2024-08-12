@@ -71,14 +71,17 @@ const DynamicForm = () => {
   const renderField = (row) => {
     if (row.tipo === 'Campo') {
       return (
-        <input
-          key={row.campoID}
-          label={row.etiqueta}
-          fullWidth
-          margin="normal"
-          value={row.valor || ''}
-          onChange={(e) => handleInputChange(row.campoID, e.target.value)}
-        />
+        <div key={row.campoID} style={{ marginBottom: '10px' }}>
+          <label htmlFor={row.campoID} style={{ display: 'block', marginBottom: '4px' }}>
+            {row.etiqueta}
+          </label>
+          <input
+            id={row.campoID}
+            value={row.valor || ''}
+            onChange={(e) => handleInputChange(row.campoID, e.target.value)}
+            style={{ width: '80%' }} // Ajusta el ancho usando CSS en línea si es necesario
+          />
+        </div>
       );
     } else if (row.tipo === 'Titulo1') {
       return <h2 key={row.campoID}>{row.etiqueta}</h2>;
