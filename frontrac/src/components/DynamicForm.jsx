@@ -38,15 +38,12 @@ const DynamicForm = () => {
     console.log("CampoID:", campoID);
     console.log("Valor nuevo:", newValue);
     setData((prevData) => {
-      const updatedData = prevData.map((row) =>
-        row.campoID === campoID ? { ...row, valor: newValue, nuevoCampo: newValue } : row
-      );
+      const updatedData = prevData.map((row) => row.campoID === campoID ? { ...row, valor: newValue, nuevoCampo: newValue } : row);
       console.log("Datos actualizados en el estado:", updatedData);
       return updatedData;
     });
   };
-  
-  // Maneja la actualización de los datos
+
   const handleUpdate = async (row) => {
     console.log("Datos antes de enviar:", row);
     try {
@@ -59,12 +56,9 @@ const DynamicForm = () => {
       };
       console.log('Datos enviados:', updatePayload);
       const response = await axios.post('https://datos-rac.vercel.app/updateData', updatePayload);
-      
       if (response.data.status) {
         alert('Se actualizó correctamente');
-        setData((prevData) =>
-          prevData.map((item) => (item.id === row.id ? { ...item, valor: row.valor } : item))
-        );
+        setData((prevData) => prevData.map((item) => (item.id === row.id ? { ...item, valor: row.valor } : item)));
       } else {
         alert('Error al actualizar');
       }
@@ -87,20 +81,74 @@ const DynamicForm = () => {
         />
       );
     } else if (row.tipo === 'Titulo1') {
-      return <h2>{row.etiqueta}</h2>;
+      return <h2 key={row.campoID}>{row.etiqueta}</h2>;
     } else if (row.tipo === 'Criterio') {
       return (
-        <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+        <table
+          style={{
+            borderCollapse: 'collapse',
+            width: '100%',
+          }}
+          key={row.campoID}
+        >
           <tbody>
             <tr style={{ backgroundColor: '#a30000', color: 'white' }}>
-              <th className="criterio" style={{ border: '1px solid black', padding: '10px', width: '33.33%' }}>Criterio</th>
-              <th style={{ border: '1px solid black', padding: '10px', width: '33.33%' }}>Grado de Cumplimiento</th>
-              <th style={{ border: '1px solid black', padding: '10px', width: '33.33%' }}>Calificación</th>
+              <th
+                className="criterio"
+                style={{
+                  border: '1px solid black',
+                  padding: '10px',
+                  width: '33.33%',
+                }}
+              >
+                Criterio
+              </th>
+              <th
+                style={{
+                  border: '1px solid black',
+                  padding: '10px',
+                  width: '33.33%',
+                }}
+              >
+                Grado de Cumplimiento
+              </th>
+              <th
+                style={{
+                  border: '1px solid black',
+                  padding: '10px',
+                  width: '33.33%',
+                }}
+              >
+                Calificación
+              </th>
             </tr>
             <tr>
-              <td className="criterio" style={{ border: '1px solid black', padding: '10px', width: '33.33%' }}>{row.etiqueta}</td>
-              <td style={{ border: '1px solid black', padding: '10px', width: '33.33%' }}>{row.valor}</td>
-              <td style={{ border: '1px solid black', padding: '10px', width: '33.33%' }}>
+              <td
+                className="criterio"
+                style={{
+                  border: '1px solid black',
+                  padding: '10px',
+                  width: '33.33%',
+                }}
+              >
+                {row.etiqueta}
+              </td>
+              <td
+                style={{
+                  border: '1px solid black',
+                  padding: '10px',
+                  width: '33.33%',
+                }}
+              >
+                {row.valor}
+              </td>
+              <td
+                style={{
+                  border: '1px solid black',
+                  padding: '10px',
+                  width: '33.33%',
+                }}
+              >
                 <textarea />
               </td>
             </tr>
@@ -142,8 +190,8 @@ const DynamicForm = () => {
             borderRadius: '10px',
             flex: 1,
             width: '200%',
-            maxHeight: 'calc(100vh - 200px)', // Ajusta el máximo alto si es necesario
-            overflow: 'auto', // Añade scroll si el contenido es demasiado grande
+            maxHeight: 'calc(100vh - 200px)',
+            overflow: 'auto',
           }}
         >
           {fields}
@@ -239,22 +287,12 @@ const DynamicForm = () => {
         }
         currentSubCollapsible = row;
         currentSubFields = [];
-      } else if (row.tipo === 'ConclusionCondicion') {
-        if (currentSubCollapsible) {
-          currentFields.push(renderSubCollapsible(currentSubCollapsible, currentSubFields));
-          currentSubCollapsible = null;
-          currentSubFields = [];
-        }
-        currentSubCollapsible = row;
-        currentSubFields = [];
-      } else if (row.tipo === 'TablaExtra') {
-        currentFields.push(renderLabelAndLink(row));
-      } else {
-        if (currentSubCollapsible) {
-          currentSubFields.push(renderField(row));
-        } else {
-          currentFields.push(renderField(row));
-        }
+      } else if (row.tipo === 'Texto') {
+        groupedFields.push(renderLabelAndLink(row));
+      } else if (currentSubCollapsible) {
+        currentSubFields.push(renderField(row));
+      } else if (currentCollapsible) {
+        currentFields.push(renderField(row));
       }
     });
     if (currentCollapsible) {
@@ -272,7 +310,7 @@ const DynamicForm = () => {
       rows.push(
         <Grid key={i} container spacing={2} marginBottom={2} sx={{ height: '100%' }}>
           {collapsibles.slice(i, i + 4).map((collapsible, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index} sx={{ height: '100%' }}>
+            <Grid item xs={12} sm={6} md={3} key={`${i}-${index}`} sx={{ height: '100%' }}>
               {collapsible}
             </Grid>
           ))}
@@ -282,12 +320,15 @@ const DynamicForm = () => {
     return rows;
   };
 
+  const groupedFields = groupFieldsByCollapsible(data);
+  const collapsibleRows = groupCollapsiblesInRows(groupedFields);
+
   return (
-    <Paper sx={{ padding: '20px', maxWidth: '1500px', margin: '30px auto', height: '100%' }}>
-      <form>
-        {groupCollapsiblesInRows(groupFieldsByCollapsible(data))}
-      </form>
-    </Paper>
+    <Box padding={4}>
+      <Paper elevation={3} style={{ padding: '16px' }}>
+        {collapsibleRows}
+      </Paper>
+    </Box>
   );
 };
 
