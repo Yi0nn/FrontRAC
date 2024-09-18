@@ -13,7 +13,7 @@ function App() {
       <header className="header-container">
         {/* Agrega la imagen */}
         <img src={logo} alt="Descripción de la imagen" />
-        <h1 className='creative-title'>INFORMACION PARA RAC</h1>
+        <h1 className='creative-title'>INFORMACION PARA RRC</h1>
         
       </header>
       <div>
