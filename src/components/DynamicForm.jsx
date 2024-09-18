@@ -9,7 +9,7 @@ const DynamicForm = () => {
 
 
   useEffect(() => {
-    axios.post('https://datos-rac.vercel.app/getData', { sheetName: 'Datos Generales RAC' })
+    axios.post('https://datos-rac.vercel.app/getData', { sheetName: 'Datos Generales RRC' })
       .then((response) => {
         if (Array.isArray(response.data.data)) {
           const dataWithCampoIDAndCollapsibleID = response.data.data.map((row, index) => ({
