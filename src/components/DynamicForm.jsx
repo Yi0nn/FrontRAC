@@ -78,7 +78,6 @@ const DynamicForm = () => {
         return;
       }
   
-      // Asegúrate de que cada cambio en pendingChanges tiene el formato correcto
       const updates = pendingChanges.map(change => ({
         id: change.id,
         updateData: {
@@ -89,18 +88,19 @@ const DynamicForm = () => {
       }));
   
       const updatePayload = {
-        sheetName: 'Datos Generales RAC',
+        sheetName: 'Datos Generales RRC',
         updates: updates
       };
   
-      console.log('Datos enviados:', updatePayload);
-      
-      // Enviar los cambios al backend
+      console.log('Datos enviados al backend:', updatePayload);  // Verifica el contenido
+  
       const response = await axios.post('https://datos-rac.vercel.app/updateData', updatePayload);
+      console.log('Respuesta del backend:', response);
+
       
       if (response.data.status) {
         alert('Se actualizaron correctamente');
-        setPendingChanges([]); // Limpiar cambios pendientes después de una actualización exitosa
+        setPendingChanges([]);
       } else {
         alert('Error al actualizar');
       }
